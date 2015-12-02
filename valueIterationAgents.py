@@ -28,26 +28,27 @@ class ValueIterationAgent(ValueEstimationAgent):
         self.discount = discount
         self.iterations = iterations
         self.values = util.Counter() # A Counter is a dict with default 0
-        self.startState = mdp.getStartState()
-        self.newCounter = util.Counter()
+        #self.startState = mdp.getStartState()
+        #self.newCounter = util.Counter()
 
         # Write value iteration code here
         "*** YOUR CODE HERE ***"
 
-        state = self.startState
 
-        for i in range(iterations+1):
-            self.newCounter = self.values.copy()
-            for k in self.mdp.getStates()
-                highestValue = float("-inf"), None
+        for i in range(self.iterations):
+            newCounter = self.values.copy()
+            states = self.mdp.getStates()
+            for state in states:
+                highestValue = None
                 legalActions = self.mdp.getPossibleActions(state)
                 for action in legalActions:
                     temp = self.getQValue(state, action)
                     if highestValue < temp:
                         highestValue = temp
-                        self.newCounter = {state : highestValue[0]}
-
-        self.values = self.newCounter
+                if highestValue is None:
+                    highestValue = 0
+                newCounter[state] = highestValue
+            self.values = newCounter
 
 
 
@@ -66,25 +67,12 @@ class ValueIterationAgent(ValueEstimationAgent):
           value function stored in self.values.
         """
         "*** YOUR CODE HERE ***"
+        value = 0.0
+        successors = self.mdp.getTransitionStatesAndProbs(state, action)
 
-        probability = self.mdp.getTransitionStatesAndProbs(state,action)
-        q = 0
-        highestValue = 0
-
-        for i in probability:
-            tuple = probability[q]
-            reward = self.mdp.getReward(state,i,tuple[0])
-            thestate = tuple[0]
-
-
-            print thestate, self.values[state]
-            theProb = tuple[1]
-
-            highestValue += (theProb*(reward+self.discount)*0)
-            q = (q+1)%4
-
-        sum = highestValue, action
-        return sum
+        for successorState, prob in successors:
+            value += prob * (self.mdp.getReward(state,action,successorState) + (self.discount * self.values[successorState]))
+        return value
 
 
     def computeActionFromValues(self, state):
@@ -97,13 +85,16 @@ class ValueIterationAgent(ValueEstimationAgent):
           terminal state, you should return None.
         """
         "*** YOUR CODE HERE ***"
-        highestAction = float("-inf"), None
+        bestAction = float("-inf"), None
         legalActions = self.mdp.getPossibleActions(state)
+        if len(legalActions) == 0:
+            return None
+
         for action in legalActions:
-            temp = self.computeQValueFromValues(state, action)
-            if highestValue[0] < temp[0]:
-                highestValue = temp
-        return highestAction[1]
+            temp = self.getQValue(state, action), action
+            if bestAction[0] < temp[0]:
+                bestAction = temp
+        return bestAction[1]
 
     def getPolicy(self, state):
         return self.computeActionFromValues(state)
