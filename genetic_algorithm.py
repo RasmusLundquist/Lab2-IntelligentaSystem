@@ -1,4 +1,5 @@
 import operator
+import random
 import numpy as np
 
 class GA(object):
@@ -72,6 +73,15 @@ class GA(object):
         ##############################
         ### YOU'RE CODE GOES HERE ####
         ##############################
+        lower = variableRange[0][0]
+        upper = variableRange[0][1]
+        for x in range(nVariables):
+            gValues = 0
+            iterator = -1
+            for i in range(x * nBits, x * nBits + nBits):
+                gValues += pow(2, iterator) * chromosome[i]
+                iterator -= 1
+            vars[x] = lower + (((upper - lower) / (1 - pow(2, -nBits))) * gValues)
 
         return vars
 
@@ -83,6 +93,14 @@ class GA(object):
 		##############################
         ### YOU'RE CODE GOES HERE ####
         ##############################
+        sum = 0
+        r = random.random()
+        for i in normalizedFitness:
+            sum += i
+            selected += 1
+            if sum >= r:
+                return selected
+
 
         return selected
 
@@ -95,10 +113,40 @@ class GA(object):
         ### YOU'RE CODE GOES HERE ####
         ##############################
 
+        fitnessList = []
+        for i in range(tournamentSize):
+            fitnessList.append(random.randint(0, len(fitness) - 1))
+
+        while len(fitnessList)>1:
+            fitnessA = fitnessList.pop()
+            fitnessB = fitnessList.pop()
+            if fitness[fitnessA] > fitness[fitnessB]:
+                if random.random() < tournamentSelectionParameter:
+                    fitnessList.append(fitnessA)
+                else:
+                    fitnessList.append(fitnessB)
+            else:
+                if random.random() < tournamentSelectionParameter:
+                    fitnessList.append(fitnessB)
+                else:
+                    fitnessList.append(fitnessA)
+
+        selected = fitnessList.pop()
         return selected
 
     def Cross(self, chromosome1, chromosome2, crossoverProbability):
-        pass
+
+
+        if random.random() <= crossoverProbability:
+
+            crossOverPoint = random.randint(0, (np.size(chromosome1)-1))
+            temp = chromosome1[:crossOverPoint].copy()
+            chromosome1[:crossOverPoint] = chromosome2[:crossOverPoint].copy()
+            chromosome2[:crossOverPoint] = temp.copy()
+
+
+
+
 
 		# Cross the two individuals "in-place"
 		# NB! Don't forget to use the crossover probability
@@ -108,7 +156,14 @@ class GA(object):
         ##############################
 
     def Mutate(self, chromosome, mutationProbability):
-        pass
+        for x in range(len(chromosome)):
+            if random.random() >= mutationProbability:
+                if chromosome[x] == 1:
+                    chromosome[x] = 0
+                else:
+                    chromosome[x] = 1
+
+
 
         # Mutate the individuals "in-place"
 		# NB! Don't forget to apply the mutation probability to each bit
