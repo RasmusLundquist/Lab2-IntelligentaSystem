@@ -73,15 +73,19 @@ class GA(object):
         ##############################
         ### YOU'RE CODE GOES HERE ####
         ##############################
-        lower = variableRange[0][0]
-        upper = variableRange[0][1]
+        lowerBound = variableRange[0][0]
+        upperBound = variableRange[0][1]
         for x in range(nVariables):
-            gValues = 0
-            iterator = -1
-            for i in range(x * nBits, x * nBits + nBits):
-                gValues += pow(2, iterator) * chromosome[i]
-                iterator -= 1
-            vars[x] = lower + (((upper - lower) / (1 - pow(2, -nBits))) * gValues)
+
+            power = -1 #starts with -1 and ends with -theNumberOfBits in the variable
+            value = 0
+            for bit in range(nBits):
+                variableSum = pow(2,power)
+                value += variableSum * chromosome[bit] #chromosome[bit] either 0 or one
+                power -= 1
+
+
+            vars[x] = lowerBound + (upperBound - lowerBound / (1 - pow(2, -nBits)) * value) # l + (u-l / 1-(2^-k) * (2^-k))
 
         return vars
 
