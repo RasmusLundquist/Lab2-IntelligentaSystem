@@ -73,7 +73,8 @@ class GA(object):
         ##############################
         ### YOU'RE CODE GOES HERE ####
         ##############################
-       
+        bitnumber = 0
+        length = 0
 
         for x in range(nVariables):
 
@@ -82,10 +83,13 @@ class GA(object):
 
             power = -1 #starts with -1 and ends with -theNumberOfBits in the variable
             value = 0
-            for bit in range(nGenes):
+            for bit in range(nBits):
                 variableSum = pow(2,power)
-                value += variableSum * chromosome[bit] #chromosome[bit] either 0 or one
+                value += variableSum * chromosome[bit+bitnumber] #chromosome[bit] either 0 or one
                 power -= 1
+
+            length += 1
+            bitnumber = length * nBits
 
 
 
