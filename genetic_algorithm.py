@@ -73,6 +73,8 @@ class GA(object):
         ##############################
         ### YOU'RE CODE GOES HERE ####
         ##############################
+       
+
         for x in range(nVariables):
 
             lowerBound = variableRange[x][0]
@@ -84,6 +86,8 @@ class GA(object):
                 variableSum = pow(2,power)
                 value += variableSum * chromosome[bit] #chromosome[bit] either 0 or one
                 power -= 1
+
+
 
 
             vars[x] = lowerBound + (upperBound - lowerBound) / (1 - pow(2, -nBits)) * value # l + (u-l / 1-(2^-k) * (2^-k))
@@ -99,15 +103,17 @@ class GA(object):
 		##############################
         ### YOU'RE CODE GOES HERE ####
         ##############################
+
         sum = 0
-        for x in normalizedFitness:
-            sumFitness += x
+        for x in range(len(normalizedFitness)):
+            sumFitness += normalizedFitness[x]
+
         r = random.random()
-        for i in normalizedFitness:
-            sum += (i/sumFitness)
-            selected += 1
+        for i in range(len(normalizedFitness)):
+            sum += (normalizedFitness[i]/sumFitness)
+
             if sum >= r:
-                return selected
+                return i
 
         return selected
 
