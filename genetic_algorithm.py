@@ -73,24 +73,26 @@ class GA(object):
         ##############################
         ### YOU'RE CODE GOES HERE ####
         ##############################
-        lowerBound = variableRange[0][0]
-        upperBound = variableRange[0][1]
         for x in range(nVariables):
+
+            lowerBound = variableRange[x][0]
+            upperBound = variableRange[x][1]
 
             power = -1 #starts with -1 and ends with -theNumberOfBits in the variable
             value = 0
-            for bit in range(nBits):
+            for bit in range(nGenes):
                 variableSum = pow(2,power)
                 value += variableSum * chromosome[bit] #chromosome[bit] either 0 or one
                 power -= 1
 
 
-            vars[x] = lowerBound + (upperBound - lowerBound / (1 - pow(2, -nBits)) * value) # l + (u-l / 1-(2^-k) * (2^-k))
+            vars[x] = lowerBound + (upperBound - lowerBound) / (1 - pow(2, -nBits)) * value # l + (u-l / 1-(2^-k) * (2^-k))
 
         return vars
 
     def RouletteWheelSelect(self, normalizedFitness):
         selected = 0
+        sumFitness = 0
 
         # Use Roulette-Wheel Selection to select an individual to the mating pool
 		
@@ -98,13 +100,14 @@ class GA(object):
         ### YOU'RE CODE GOES HERE ####
         ##############################
         sum = 0
+        for x in normalizedFitness:
+            sumFitness += x
         r = random.random()
         for i in normalizedFitness:
-            sum += i
+            sum += (i/sumFitness)
             selected += 1
             if sum >= r:
                 return selected
-
 
         return selected
 
@@ -161,7 +164,7 @@ class GA(object):
 
     def Mutate(self, chromosome, mutationProbability):
         for x in range(len(chromosome)):
-            if random.random() >= mutationProbability:
+            if random.random() <= mutationProbability:
                 if chromosome[x] == 1:
                     chromosome[x] = 0
                 else:
